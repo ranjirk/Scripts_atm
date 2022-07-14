@@ -1,4 +1,5 @@
 import sqlite3
+from audio_accessibility import haudio
 
 class accessing_database:
 	def __init__(self):
@@ -41,48 +42,52 @@ class accessing_database:
 		self.conn.close()
 		return self.balance_amount[0]
 
-
 	def withdrawl_money(self, amount, username):
-		self.conn = sqlite3.connect('test.db')
-		self.amount, self.username = amount, username
-		self.balance = self.conn.execute(f"SELECT BALANCE FROM ACCOUNT WHERE USER_ID='{self.username}'").fetchone()
-		self.new_balance = int(self.balance[0]) - int(self.amount)
-		self.conn.execute(f"UPDATE ACCOUNT SET BALANCE='{self.new_balance}' WHERE USER_ID='{self.username}'")
-		self.conn.commit()
-		self.conn.close()
+		try:
+			self.conn = sqlite3.connect('test.db')
+			self.amount, self.username = amount, username
+			self.balance = self.conn.execute(f"SELECT BALANCE FROM ACCOUNT WHERE USER_ID='{self.username}'").fetchone()
+			self.new_balance = int(self.balance[0]) - int(self.amount)
+			self.conn.execute(f"UPDATE ACCOUNT SET BALANCE='{self.new_balance}' WHERE USER_ID='{self.username}'")
+			self.conn.commit()
+			self.conn.close()
+			return True
+		except Exception as e:
+			return False
 
 	def deposit_money(self, amount, username):
-		self.conn = sqlite3.connect('test.db')
-		self.amount, self.username = amount, username
-		self.balance = self.conn.execute(f"SELECT BALANCE FROM ACCOUNT WHERE USER_ID='{self.username}'").fetchone()
-		print("___________________________________________________________________________")
-		print("Old balance : ", self.balance[0])
-		print("amount : ", self.amount)
-		print("___________________________________________________________________________")
-		self.new_balance = int(self.balance[0]) + int(self.amount)
-		self.conn.execute(f"UPDATE ACCOUNT SET BALANCE='{self.new_balance}' WHERE USER_ID='{self.username}'")
-		self.conn.commit()
-		self.conn.close()
+		try:
+			self.conn = sqlite3.connect('test.db')
+			self.amount, self.username = amount, username
+			self.balance = self.conn.execute(f"SELECT BALANCE FROM ACCOUNT WHERE USER_ID='{self.username}'").fetchone()
+			self.new_balance = int(self.balance[0]) + int(self.amount)
+			self.conn.execute(f"UPDATE ACCOUNT SET BALANCE='{self.new_balance}' WHERE USER_ID='{self.username}'")
+			self.conn.commit()
+			self.conn.close()
+			return True
+		except exception as e:
+			return False
 
 	def transfer_fund(self, amount, balance, username, to_acc_no):
-		self.conn = sqlite3.connect('test.db')
-		self.amount, self.username, self.to_acc_no = amount, username, to_acc_no
+		try :
+			self.conn = sqlite3.connect('test.db')
+			self.amount, self.username, self.to_acc_no = amount, username, to_acc_no
 
-		self.balance_from = self.conn.execute(f"SELECT BALANCE FROM ACCOUNT WHERE USER_ID='{self.username}'").fetchone()
-		self.balance_to   = self.conn.execute(f"SELECT BALANCE FROM ACCOUNT WHERE ACCOUNT_NO='{self.to_acc_no}'").fetchone()
+			self.balance_from = self.conn.execute(f"SELECT BALANCE FROM ACCOUNT WHERE USER_ID='{self.username}'").fetchone()
+			self.balance_to   = self.conn.execute(f"SELECT BALANCE FROM ACCOUNT WHERE ACCOUNT_NO='{self.to_acc_no}'").fetchone()
 
-		self.new_balance_from = self.balance_from[0] - self.amount
-		self.new_balance_to   = self.balance_to[0] + self.amount
-		print("sender new balance" , self.new_balance_from)
-		print("receiver new balance", self.new_balance_to)
+			self.new_balance_from = self.balance_from[0] - self.amount
+			self.new_balance_to   = self.balance_to[0] + self.amount
 
-		self.conn.execute(f"UPDATE ACCOUNT SET BALANCE='{self.new_balance_from}' WHERE USER_ID='{self.username}'")
-		self.conn.execute(f"UPDATE ACCOUNT SET BALANCE='{self.new_balance_to}' WHERE ACCOUNT_NO='{self.to_acc_no}'")
+			self.conn.execute(f"UPDATE ACCOUNT SET BALANCE='{self.new_balance_from}' WHERE USER_ID='{self.username}'")
+			self.conn.execute(f"UPDATE ACCOUNT SET BALANCE='{self.new_balance_to}' WHERE ACCOUNT_NO='{self.to_acc_no}'")
 
-		self.conn.commit()
-		self.conn.close()
+			self.conn.commit()
+			self.conn.close()
+			return True, "Funds transferred successfully"
 
-		return True, "Funds transferred successfully"
+		except Exception as e :
+			return False
 
 
 
